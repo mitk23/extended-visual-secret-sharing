@@ -1,0 +1,13 @@
+{
+  "python.formatting.blackPath": "/Users/mitk/Documents/2020A/was_overview/extended-visual-secret-sharing/.venv/bin/black",
+  "python.formatting.provider": "black",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Path": "/Users/mitk/Documents/2020A/was_overview/extended-visual-secret-sharing/.venv/bin/flake8",
+  "python.linting.flake8CategorySeverity.E": "Warning",
+  "python.linting.flake8CategorySeverity.F": "Warning",
+  "python.sortImports.path": "/Users/mitk/Documents/2020A/was_overview/extended-visual-secret-sharing/.venv/bin/isort",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  }
+}
