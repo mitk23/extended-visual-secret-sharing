@@ -3,92 +3,63 @@ import random
 import numpy as np
 
 import constants
-from error_diffusion import error_diffusion
 
 
-def vss(img):
+def vss_bits_combination(pix_val):
+    pattern_dict = {"black": (0, 1), "white": (0, 0)}
+
+    if pix_val > constants.THRESH:
+        pattern = pattern_dict["white"]
+    else:
+        pattern = pattern_dict["black"]
+
+    return pattern
+
+
+def get_vss_bits(pix_val):
+    pat1, pat2 = vss_bits_combination(pix_val)
+
+    bits1 = constants.VSS_BITS[pat1]
+    bits2 = constants.VSS_BITS[pat2]
+
+    return bits1, bits2
+
+
+def vss(secret):
     """
-    this function implements VSS (visual secret sharing)
+    implementation of VSS: visual secret sharing
     create two sheets sharing the secret image with 2x2 subpixels
 
     Parameters
     ----------
-    img: np.ndarray[np.ndarray, np.uint8]
-      secret image to be encrypted in unsigned int8
+    secret: np.ndarray[np.ndarray, np.uint8]
+        secret image to be encrypted in unsigned int8
 
     Returns
     -------
-    sheet0: np.ndarray[np.ndarray, np.uint8]
-    sheet1: np.ndarray[np.ndarray, np.uint8]
+    res_sheet1: np.ndarray[np.ndarray, np.uint8]
+    res_sheet2: np.ndarray[np.ndarray, np.uint8]
     """
 
-    H, W = img.shape[:2]
+    H, W = secret.shape[:2]
 
-    sheet0 = np.zeros((H * 2, W * 2), np.uint8)
-    sheet1 = np.zeros((H * 2, W * 2), np.uint8)
+    res_sheet1 = np.zeros((H * 2, W * 2), np.uint8)
+    res_sheet2 = np.zeros((H * 2, W * 2), np.uint8)
 
     for row in range(H):
         for col in range(W):
-            pat = 0 if img[row, col] > constants.THRESH else 1
+            bits1, bits2 = get_vss_bits(secret[row, col])
 
             # randomize subpixel bit pattern
             rand = random.sample(range(4), 4)
             for r in range(2):
                 for c in range(2):
-                    sheet0[row * 2 + r, col * 2 + c] = constants.VSS_BITS[
-                        constants.VSS_PATTERN[pat][0]
-                    ][rand[r * 2 + c]]
-                    sheet1[row * 2 + r, col * 2 + c] = constants.VSS_BITS[
-                        constants.VSS_PATTERN[pat][1]
-                    ][rand[r * 2 + c]]
+                    i = rand[r * 2 + c]
+                    res_sheet1[row * 2 + r, col * 2 + c] = bits1[i]
+                    res_sheet2[row * 2 + r, col * 2 + c] = bits2[i]
 
-    return sheet0, sheet1
+    return res_sheet1, res_sheet2
 
 
-def evss(img_sheet0, img_sheet1, img_secret, halftoning=True):
-    """
-    this function implements EVSS (extended visual secret sharing)
-    create two sheets and an encrypted secret image by EVSS scheme
-
-    Parameters
-    ----------
-    img_sheet0: np.ndarray[np.ndarray]
-      to be first distributed image
-    img_sheet1: np.ndarray[np.ndarray]
-      to be second distributed image
-    img_secret: np.ndarray[np.ndarray]
-      secret image to be encrypted
-    """
-    if halftoning:
-        img_sheet0 = error_diffusion(img_sheet0)
-        img_sheet1 = error_diffusion(img_sheet1)
-        img_secret = error_diffusion(img_secret)
-
-    H, W = img_secret.shape[:2]
-
-    sheet0 = np.zeros((H * 2, W * 2), np.uint8)
-    sheet1 = np.zeros((H * 2, W * 2), np.uint8)
-
-    for row in range(H):
-        for col in range(W):
-            pat = (
-                (img_sheet0[row, col] < constants.THRESH) << 2
-                | (img_sheet1[row, col] < constants.THRESH) << 1
-                | (img_secret[row, col] < constants.THRESH)
-            )
-
-            rand = random.sample(range(4), 4)
-            for r in range(2):
-                for c in range(2):
-                    sheet0[row * 2 + r, col * 2 + c] = constants.EVSS_BITS[
-                        constants.EVSS_PATTERN[pat][0]
-                    ][rand[r * 2 + c]]
-                    sheet1[row * 2 + r, col * 2 + c] = constants.EVSS_BITS[
-                        constants.EVSS_PATTERN[pat][1]
-                    ][rand[r * 2 + c]]
-
-    return sheet0, sheet1
-
-
-def decode(sheet0, sheet1):
-    return np.minimum(sheet0, sheet1)
+def decode(sheet1, sheet2):
+    return np.minimum(sheet1, sheet2)

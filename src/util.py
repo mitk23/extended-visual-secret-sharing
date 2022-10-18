@@ -3,26 +3,44 @@ import sys
 import cv2
 
 
-def read_image():
+def read_image(img_fname):
     """
     read an image file and return its data
+
+    Parameters
+    ----------
+    img_fname: str
+        image file name
 
     Returns
     -------
     img: numpy.ndarray
     """
-    if len(sys.argv) < 2:
-        fname = input("image file path -> ")
-    else:
-        fname = sys.argv[1]
-
-    img = cv2.imread(fname)
+    img = cv2.imread(img_fname)
 
     if img is None:
-        print("Error: no image file: {}" % fname, file=sys.stderr)
+        print(f"no image file: {img_fname}", file=sys.stderr)
         sys.exit(1)
 
     return img
+
+
+def img2gray(img):
+    '''
+    grayscale an image
+
+    Parameters
+    ----------
+    img: numpy.ndarray
+        cv2 image file
+
+    Returns
+    -------
+    gray: numpy.ndarray
+        cv2 image file (grayscale)
+    '''
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return gray
 
 
 def read_3images():
