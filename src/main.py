@@ -2,6 +2,7 @@ import cv2
 
 import util
 import vss
+import evss
 
 
 def main(args):
@@ -17,7 +18,8 @@ def main(args):
 
     # encrypt
     # sheet0, sheet1 = vss.evss(img_sheet0, img_sheet1, img_secret)
-    res_sheet1, res_sheet2 = vss.vss(secret)
+    # res_sheet1, res_sheet2 = vss.vss(secret)
+    res_sheet1, res_sheet2 = evss.evss(sheet1, sheet2, secret, halftoning=False)
     encrypted = vss.decode(res_sheet1, res_sheet2)
 
     # show

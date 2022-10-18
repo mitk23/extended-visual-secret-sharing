@@ -11,10 +11,7 @@ VSS_BITS = (
     (BLACK, BLACK, WHITE, WHITE),
     (WHITE, WHITE, BLACK, BLACK),
 )
-VSS_PATTERN = (
-    (0, 0),
-    (0, 1),
-)
+VSS_PATTERN_DICT = {"black": (0, 1), "white": (0, 0)}
 
 # extended visual secret sharing bits
 EVSS_BITS = (

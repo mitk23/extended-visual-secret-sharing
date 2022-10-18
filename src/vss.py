@@ -2,25 +2,23 @@ import random
 
 import numpy as np
 
-import constants
+from constants import THRESH, VSS_BITS, VSS_PATTERN_DICT
 
 
-def vss_bits_combination(pix_val):
-    pattern_dict = {"black": (0, 1), "white": (0, 0)}
-
-    if pix_val > constants.THRESH:
-        pattern = pattern_dict["white"]
+def vss_bits_combination(pix_val, combination_dict=VSS_PATTERN_DICT):
+    if pix_val > THRESH:
+        pattern = combination_dict["white"]
     else:
-        pattern = pattern_dict["black"]
+        pattern = combination_dict["black"]
 
     return pattern
 
 
-def get_vss_bits(pix_val):
-    pat1, pat2 = vss_bits_combination(pix_val)
+def get_vss_bits(pix_val, combination_dict=VSS_PATTERN_DICT, bits_list=VSS_BITS):
+    pat1, pat2 = vss_bits_combination(pix_val, combination_dict=combination_dict)
 
-    bits1 = constants.VSS_BITS[pat1]
-    bits2 = constants.VSS_BITS[pat2]
+    bits1 = bits_list[pat1]
+    bits2 = bits_list[pat2]
 
     return bits1, bits2
 

@@ -3,6 +3,17 @@ import sys
 import cv2
 
 
+def is_equal_img_size(*img_list):
+    """
+    Parameters
+    ----------
+    img_list: List[numpy.ndarray]
+        list of cv2 images
+    """
+    res = all(img.shape == img_list[0].shape for img in img_list)
+    return res
+
+
 def read_image(img_fname):
     """
     read an image file and return its data
@@ -26,7 +37,7 @@ def read_image(img_fname):
 
 
 def img2gray(img):
-    '''
+    """
     grayscale an image
 
     Parameters
@@ -38,42 +49,6 @@ def img2gray(img):
     -------
     gray: numpy.ndarray
         cv2 image file (grayscale)
-    '''
+    """
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return gray
-
-
-def read_3images():
-    """
-    read three image files and return the data
-    """
-    if len(sys.argv) > 1:
-        f1, f2, f3 = sys.argv[1:4]
-    else:
-        f1 = input("image file for sheet0 -> ")
-        f2 = input("image file for sheet1 -> ")
-        f3 = input("image file for secret -> ")
-
-    img_sheet0 = cv2.imread(f1)
-    img_sheet1 = cv2.imread(f2)
-    img_secret = cv2.imread(f3)
-
-    if img_sheet0 is None:
-        print("Error: no image file: {}" % f1, file=sys.stderr)
-        sys.exit(1)
-    if img_sheet1 is None:
-        print("Error: no image file: {}" % f2, file=sys.stderr)
-        sys.exit(1)
-    if img_secret is None:
-        print("Error: no image file: {}" % f3, file=sys.stderr)
-        sys.exit(1)
-
-    if (
-        (img_sheet0.shape != img_sheet1.shape)
-        or (img_sheet0.shape != img_sheet1.shape)
-        or (img_sheet1.shape != img_secret.shape)
-    ):
-        print("Error: images should have the same size", file=sys.stderr)
-        sys.exit(1)
-
-    return img_sheet0, img_sheet1, img_secret
