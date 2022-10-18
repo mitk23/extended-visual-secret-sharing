@@ -1,6 +1,7 @@
 import sys
 
 import cv2
+import numpy as np
 
 
 def is_equal_img_size(*img_list):
@@ -12,6 +13,12 @@ def is_equal_img_size(*img_list):
     """
     res = all(img.shape == img_list[0].shape for img in img_list)
     return res
+
+
+def check_size_equality(*img_list):
+    if not is_equal_img_size(*img_list):
+        print(f"different size images", file=sys.stderr)
+        sys.exit(1)
 
 
 def read_image(img_fname):
@@ -52,3 +59,7 @@ def img2gray(img):
     """
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return gray
+
+
+def vss_decode(sheet1, sheet2):
+    return np.minimum(sheet1, sheet2)

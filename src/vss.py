@@ -57,7 +57,3 @@ def vss(secret):
                     res_sheet2[row * 2 + r, col * 2 + c] = bits2[i]
 
     return res_sheet1, res_sheet2
-
-
-def decode(sheet1, sheet2):
-    return np.minimum(sheet1, sheet2)

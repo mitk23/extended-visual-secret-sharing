@@ -1,8 +1,8 @@
 import cv2
 
 import util
-import vss
-import evss
+from evss import evss
+from vss import vss
 
 
 def main(args):
@@ -11,16 +11,24 @@ def main(args):
     sheet2 = util.read_image(args.sheet2)
     secret = util.read_image(args.secret)
 
+    # check the size equality
+    util.check_size_equality(sheet1, sheet2, secret)
+    
     # grayscale
     sheet1 = util.img2gray(sheet1)
     sheet2 = util.img2gray(sheet2)
     secret = util.img2gray(secret)
 
     # encrypt
-    # sheet0, sheet1 = vss.evss(img_sheet0, img_sheet1, img_secret)
     # res_sheet1, res_sheet2 = vss.vss(secret)
-    res_sheet1, res_sheet2 = evss.evss(sheet1, sheet2, secret, halftoning=False)
-    encrypted = vss.decode(res_sheet1, res_sheet2)
+    res_sheet1, res_sheet2 = evss(
+        sheet1,
+        sheet2,
+        secret,
+        halftone=args.halftone,
+        diffusion_filter=args.diffusion_filter,
+    )
+    encrypted = util.vss_decode(res_sheet1, res_sheet2)
 
     # show
     cv2.imshow("Sheet0", res_sheet1)
@@ -42,6 +50,17 @@ if __name__ == "__main__":
         "sheet2", help="the second image to be the result of encryption"
     )
     parser.add_argument("secret", help="an image to be encrypted")
+    parser.add_argument(
+        "--halftone",
+        help="whether to halftone images",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--diffusion_filter",
+        help="error diffusion filter",
+        choices=["floyd", "jarvis"],
+        default="jarvis",
+    )
 
     args = parser.parse_args()
 

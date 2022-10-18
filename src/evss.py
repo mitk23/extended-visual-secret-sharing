@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from constants import EVSS_BITS, EVSS_PATTERN, THRESH
-from error_diffusion import error_diffusion
+from error_diffusion import halftoning
 
 
 def evss_bits_combination(px1, px2, px3, combination_list=EVSS_PATTERN):
@@ -22,7 +22,7 @@ def get_evss_bits(px1, px2, px3, combination_list=EVSS_PATTERN, bits_list=EVSS_B
     return bits1, bits2
 
 
-def evss(sheet1, sheet2, secret, halftoning=True):
+def evss(sheet1, sheet2, secret, halftone=True, diffusion_filter="jarvis"):
     """
     implementation of EVSS (extended visual secret sharing)
     create two sheets and an encrypted secret image by EVSS scheme
@@ -36,10 +36,10 @@ def evss(sheet1, sheet2, secret, halftoning=True):
     secret: np.ndarray[np.ndarray]
         secret image to be encrypted
     """
-    if halftoning:
-        sheet1 = error_diffusion(sheet1)
-        sheet2 = error_diffusion(sheet2)
-        secret = error_diffusion(secret)
+    if halftone:
+        sheet1 = halftoning(sheet1, diffusion_filter=diffusion_filter)
+        sheet2 = halftoning(sheet2, diffusion_filter=diffusion_filter)
+        secret = halftoning(secret, diffusion_filter=diffusion_filter)
 
     H, W = secret.shape[:2]
 
